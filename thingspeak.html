@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>獲取指定日期的數據</title>
+</head>
+<script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<body onload="onLoadPage()">
+<label>請輸入開始日期：</label>
+<input id='txt_start_date' placeholder="請輸入開始日期：" class="Wdate" type="text"
+       onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+<label>請輸入截至日期：</label>
+<input id='txt_end_date' placeholder="請輸入截至日期：" class="Wdate" type="text"
+       onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+<button onclick="check()">查詢</button>
+<br/>
+<!--溫度-->
+<iframe id="temp_frame" width="450" height="260" style="border: 1px solid #cccccc;" src=""></iframe>
+<!--濕度-->
+<iframe id="humi_frame" width="450" height="260" style="border: 1px solid #cccccc;" src=""></iframe>
+<!--PH值-->
+<iframe id="ph_frame" width="450" height="260" style="border: 1px solid #cccccc;" src=""></iframe>
+<script>
+    function loadIframeByDate(start_date, end_date) {
+        document.getElementById("temp_frame").src = "https://thingspeak.com/channels/2049601/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&" +
+            "title=Temperature（溫度）&type=line&yaxis=%E2%84%83&start=" + start_date + "&end=" + end_date
+        document.getElementById("humi_frame").src = "https://thingspeak.com/channels/2049601/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&" +
+            "title=Humidity（濕度）&type=line&yaxis=RH%25&start=" + start_date + "&end=" + end_date
+        document.getElementById("ph_frame").src = "https://thingspeak.com/channels/2049601/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&" +
+            "title=PH（PH值）&type=line&start=" + start_date + "&end=" + end_date
+    }
+
+    function onLoadPage() {
+        let cur_dat_str = getNowFormatDate();
+        console.log(cur_dat_str)
+        document.getElementById('txt_start_date').value = cur_dat_str
+        document.getElementById('txt_end_date').value = cur_dat_str
+        loadIframeByDate(cur_dat_str, cur_dat_str);
+    }
+
+    function check() {
+        var st = document.getElementById('txt_start_date').value
+        var en = document.getElementById('txt_end_date').value
+        loadIframeByDate(st, en);
+    }
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var hour = date.getHours();
+        hour = (hour < 10 ? "0" + hour : hour);
+        var min = date.getMinutes();
+        min = (min < 10 ? "0" + min : min);
+        var sec = date.getSeconds();
+        sec = (sec < 10 ? "0" + sec : sec);
+
+        var myTime = hour + ":" + min + ":" + sec;
+        return year + seperator1 + month + seperator1 + strDate + " " + myTime;
+    }
+</script>
+</body>
+</html>
